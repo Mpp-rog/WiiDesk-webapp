@@ -197,7 +197,7 @@
             <div class="cm-wrap">
                 <h1 class="cm-title">Manage Channels</h1>
                 <p class="cm-hint">
-                    <strong>Drag</strong> a channel to move it, or use the arrows. Click <strong>&times;</strong> to remove one.
+                    <strong>Drag</strong> a channel to move it, or use the arrows. Click <strong>&#9998;</strong> to edit one, or <strong>&times;</strong> to remove it.
                     Click the dashed tile to add a new channel and pick its look.
                 </p>
                 <div class="cm-grid ch-c" id="cmGrid"></div>
@@ -217,6 +217,7 @@
             <input type="text" id="cmTitle" maxlength="24" placeholder="My App" />
 
             <label class="cm-field-label">Channel Icon <span class="cm-sub">(fills the tile)</span></label>
+            <p class="cm-field-tip">Best results: a 16:9 image, at least 512&times;288px.</p>
             <div class="cm-icon-row">
                 <div class="cm-icon-preview" id="cmIconPreview">?</div>
                 <input type="file" id="cmIconFile" accept="image/*" />
@@ -236,7 +237,6 @@
             <input type="text" id="cmTargetWebsite" placeholder="https://example.com" style="margin-top: 1vh;" />
 
             <div class="cm-modal-actions">
-                <button class="cm-btn danger" id="cmDeleteFromModal" style="display:none; margin-right:auto;">Delete</button>
                 <button class="cm-btn secondary" id="cmCancel">Cancel</button>
                 <button class="cm-btn primary" id="cmSave">Add Channel</button>
             </div>
@@ -487,8 +487,10 @@
 
             $(".close").click(() => {
                 $(".grid").fadeIn();
-                $(".settings-content").fadeOut();
-                setTimeout(() => {$(".settings").fadeOut(); showSettingsView('wiiMainView');}, 3500);
+                $(".settings-content").fadeOut(400, () => {
+                    $(".settings").fadeOut();
+                    showSettingsView('wiiMainView');
+                });
             });
 
             $("#openChannelManagerBtn").click(() => {
@@ -697,7 +699,6 @@
         function cmOpenAddModal() {
             cmEditingIndex = null;
             document.getElementById('cmModalTitle').textContent = 'Add a Channel';
-            document.getElementById('cmDeleteFromModal').style.display = 'none';
             document.getElementById('cmSave').textContent = 'Add Channel';
             document.getElementById('cmTitle').value = '';
             cmUploadedIcon = null;
@@ -718,9 +719,7 @@
             var ch = cmChannels[index];
             cmEditingIndex = index;
             document.getElementById('cmModalTitle').textContent = 'Edit Channel';
-            document.getElementById('cmDeleteFromModal').style.display = 'inline-block';
             document.getElementById('cmSave').textContent = 'Save Changes';
-
             document.getElementById('cmTitle').value = ch.title || '';
             cmUploadedIcon = (ch.customArt && ch.customArt.icon) || null;
             cmUploadedPreviewImage = (ch.customArt && ch.customArt.previewImage) || null;
@@ -730,9 +729,8 @@
             document.getElementById('cmPreviewMusicFile').value = '';
             document.getElementById('cmIconPreview').innerHTML = cmUploadedIcon ? `<img src="${cmUploadedIcon}" />` : '?';
             document.getElementById('cmPreviewImagePreview').innerHTML = cmUploadedPreviewImage ? `<img src="${cmUploadedPreviewImage}" />` : '?';
-            document.getElementById('cmMusicFileName').textContent = cmUploadedPreviewMusic ? '🎵 Music attached' : '';
+            document.getElementById('cmMusicFileName').textContent = cmUploadedPreviewMusic ? '🎵 current preview music' : '';
             document.getElementById('cmTargetWebsite').value = ch.target || '';
-
             document.getElementById('cmModalOverlay').style.display = 'flex';
             playSFX('button-select.mp3', userConfig.sfxVol);
         }
@@ -778,17 +776,21 @@
             if (cmEditingIndex !== null) {
                 var existing = cmChannels[cmEditingIndex];
                 existing.title = title;
-                existing.customArt = {
-                    icon: cmUploadedIcon,
-                    previewImage: cmUploadedPreviewImage,
-                    previewMusic: cmUploadedPreviewMusic
-                };
-                if (target) { existing.target = target; } else { delete existing.target; }
+                if (target) existing.target = target;
+                else delete existing.target;
+
+                if (existing.customArt || cmUploadedIcon || cmUploadedPreviewImage || cmUploadedPreviewMusic) {
+                    existing.customArt = {
+                        icon: cmUploadedIcon,
+                        previewImage: cmUploadedPreviewImage,
+                        previewMusic: cmUploadedPreviewMusic
+                    };
+                }
 
                 cmPersist();
                 cmCloseModal();
                 cmRenderGrid();
-                playSFX('button-select.mp3', userConfig.sfxVol);
+                playSFX('channel-open.mp3', userConfig.sfxVol);
                 cmToast('Channel updated!');
                 return;
             }
@@ -812,13 +814,6 @@
             cmRenderGrid();
             playSFX('channel-open.mp3', userConfig.sfxVol);
             cmToast('Channel added!');
-        });
-
-        document.getElementById('cmDeleteFromModal').addEventListener('click', function() {
-            if (cmEditingIndex === null) return;
-            var index = cmEditingIndex;
-            cmCloseModal();
-            cmRemoveChannelAt(index);
         });
 
         document.getElementById('cmResetDefaults').addEventListener('click', function() {

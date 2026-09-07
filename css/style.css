@@ -74,6 +74,11 @@
     font-smooth: always;
     scroll-behavior: smooth;
     transition: 200ms;
+    user-select: none;
+}
+
+input, textarea {
+    user-select: text;
 }
 
 body {
@@ -84,7 +89,7 @@ body {
     color: #84868a;
     font-family: 'Regular';
     font-size: 2vh;
-    cursor: url('../assets/cursor.png'), auto;
+    cursor: url('../assets/cursor.png') 12 1, auto;
 }
 
 .main-menu {
@@ -216,6 +221,10 @@ a, button {
     bottom: 5vh; left: 50%;
     transform: translateX(-50%);
     opacity: 0.6;
+}
+
+.tip {
+    user-select: none;
 }
 
 .splash .channels {
@@ -468,7 +477,7 @@ a, button {
 .ch-c .ch.occupied img,
 .ch-c .ch.occupied iframe,
 .ch-c .ch.occupied .custom-art {
-    width: 101%; height: 100%;
+    width: 101%; height: 94%;
     object-fit: cover;
     position: relative;
     clip-path: polygon(2% 7%, 6% 2%, 52% 1%, 95% 3%,
@@ -482,7 +491,7 @@ a, button {
     justify-content: center;
     overflow: hidden;
     box-sizing: border-box;
-    background: linear-gradient(160deg, #6a7b8c, #3d4a57);
+    background: #ffffff;
 }
 
 .ch-c .ch.occupied .custom-art-icon {
@@ -495,8 +504,8 @@ a, button {
     font-family: inherit;
     font-size: 6vh;
     font-weight: bold;
-    color: white;
-    text-shadow: 0 0.2vh 0.4vh rgba(0,0,0,0.4);
+    color: #4a5a6a;
+    text-shadow: 0 0.2vh 0.4vh rgba(0,0,0,0.15);
 }
 
 .ch-c .ch.occupied::after {
@@ -598,7 +607,8 @@ body:has(.main-menu.ch-trans-on) .ch-selection {
     line-height: 3.5vh;
     font-size: 3.5vh;
     position: absolute;
-    bottom: -25%;
+    top: 100%;
+    margin-top: 1vh;
     left: 50%;
     width: max-content;
     max-width: 100%;
@@ -634,7 +644,7 @@ body:has(.main-menu.ch-trans-on) .ch-selection {
 }
 
 .ch-selection {
-    cursor: url('../assets/cursor.png'), auto;
+    cursor: url('../assets/cursor.png') 12 1, auto;
     position: absolute;
     z-index: 30;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -1541,7 +1551,7 @@ https://codepen.io/nelledejones/pen/gOOPWrK */
     overflow-y: auto;
 }
 .cm-title { color: #fff; font-size: 4.5vh; margin: 0 0 1vh; }
-.cm-hint { color: #ddd; font-size: 2vh; margin: 0 0 3vh; max-width: 70vw; }
+.cm-hint { color: #ddd; font-size: 2vh; margin: 0 0 3vh; max-width: 70vw; user-select: none; }
 .cm-hint strong { color: #fff; }
 
 .cm-grid.ch-c {
@@ -1596,6 +1606,7 @@ https://codepen.io/nelledejones/pen/gOOPWrK */
     box-shadow: 0 0.3vh 0.6vh rgba(0,0,0,0.4);
 }
 .cm-controls button.cm-delete { background: #d9534f; color: #fff; }
+.cm-controls button.cm-edit { background: #4a90d9; color: #fff; }
 .cm-controls button:disabled { opacity: 0.35; cursor: default; }
 
 .cm-add-tile {
@@ -1637,6 +1648,7 @@ https://codepen.io/nelledejones/pen/gOOPWrK */
 .cm-modal h2 { margin: 0 0 2vh; color: #333; font-size: 3vh; }
 .cm-modal label.cm-field-label { display: block; color: #444; font-size: 1.9vh; margin: 1.8vh 0 0.6vh; font-weight: bold; }
 .cm-field-label .cm-sub { font-weight: normal; color: #888; font-size: 1.5vh; }
+.cm-field-tip { color: #888; font-size: 1.5vh; margin: 0 0 0.8vh; }
 .cm-modal input[type="text"] {
     width: 100%; box-sizing: border-box; padding: 1vh 1.2vh;
     font-size: 1.9vh; border: 0.15vh solid #ccc; border-radius: 0.6vh;
@@ -1663,7 +1675,6 @@ https://codepen.io/nelledejones/pen/gOOPWrK */
 }
 .cm-btn.primary { background: #4a90d9; color: #fff; }
 .cm-btn.secondary { background: #ddd; color: #444; }
-.cm-btn.danger { background: #d9534f; color: #fff; }
 
 .cm-toast {
     position: fixed; bottom: 3vh; left: 50%; transform: translateX(-50%) translateY(2vh);
